@@ -1,0 +1,10 @@
+10/XX　espとCAN送受信スルヤーツがSPIできない
+ESP32_can_1
+
+10/13　espとardのSPI通信できた.構造体の受け渡しOK
+esp(master)とard(slave)のMISOのピンが電圧の関係で抵抗を挟まないかん.master,slaveが逆やったらMOSI.
+
+ard---(220Ω)---esp
+              |
+              --(330Ω)---GND
+SPI_test_1,ESP32_bluetooth_1
