@@ -107,43 +107,58 @@ void loop() {
 #include <BlynkSimpleEsp32.h>
 
 char auth[] = "YXBMPnfwHh3la8xnIqZPBWCzEXDxHwHu";       // Blynkアプリから取得
-//家char ssid[] = "59669938-2.4G";            // 2.4GHzのWi-Fi
-//家char pass[] = "91828122";
-char ssid[] = "Robohan.net";
-char pass[] = "robohan2008";
+char ssid[] = "59669938-2.4G";            // 2.4GHzのWi-Fi
+char pass[] = "91828122";
+//char ssid[] = "Robohan.net";
+//char pass[] = "robohan2008";
 
-const int pwmChannel = 0;
+const int pwmChannel1 = 0;
 const int pwmChannel2 = 1;
 const int pwmFreq = 5000;
-const int pwmResolution = 8; // 8bit → 0〜255
+const int pwmResolution = 7; // 8bit → 0〜255
+const int pwmPin1 = 22;
+const int pwmPin2 = 23;
 
 
 
 void setup() {
   Serial.begin(115200);
-  pinMode(2, OUTPUT);
-  pinMode(23, OUTPUT);
+  pinMode(pwmPin1, OUTPUT);
+  pinMode(pwmPin2, OUTPUT);
   Blynk.begin(auth, ssid, pass);
 
-  ledcSetup(pwmChannel, pwmFreq, pwmResolution);
-  ledcAttachPin(2, pwmChannel);
-  ledcSetup(pwmChannel, pwmFreq, pwmResolution);
-  ledcAttachPin(2, pwmChannel);
+  ledcSetup(pwmChannel1, pwmFreq, pwmResolution);
+  ledcAttachPin(pwmPin1, pwmChannel1);
 
   ledcSetup(pwmChannel2, pwmFreq, pwmResolution);
-  ledcAttachPin(23, pwmChannel2);
-
+  ledcAttachPin(pwmPin2, pwmChannel2);
 }
+
+void setMotor(int8_t speed) {
+  if (speed >= 0) {
+    ledcWrite(pwmChannel1, speed);
+    ledcWrite(pwmChannel2, 0);
+  } else {
+    ledcWrite(pwmChannel1, 0);
+    ledcWrite(pwmChannel2, -speed);
+  }
+}
+
+
 
 void loop() {
   Blynk.run();
 }
 
-BLYNK_WRITE(V0) {
-  int value = param.asInt(); // 0 or 1
-  ledcWrite(pwmChannel, value);
+BLYNK_WRITE(V7) {
+  int value = param.asInt(); 
+  Serial.printf("x:%d\n",value);
+  setMotor(value);
 }
-BLYNK_WRITE(V2) {
-  int value = param.asInt(); // 0 or 1
-  ledcWrite(pwmChannel2, value);
-}
+
+/*BLYNK_WRITE(V8) {
+  int value = param.asInt();
+  Serial.printf("y:%d\n",value);
+  setMotor(value); 
+  ledcWrite(pwmChannelY, value);
+}*/
